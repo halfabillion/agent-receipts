@@ -1,0 +1,57 @@
+{
+  "version": "agentreceipts/1",
+  "invoiceNumber": "AR-DEMO-000001",
+  "issuedAt": "2026-10-23T13:07:04.309Z",
+  "seller": {
+    "legalName": "AX1 demo seller (illustrative)",
+    "address": "0x7284D41b5b852F2bd4c99bDf95043D84452d299C",
+    "jurisdiction": "GB",
+    "termsUrl": "http://localhost:8787/terms/v1.txt",
+    "termsSha256": "0x46557d085bbab44a7a34fdb3950d20606bf66dfe70410d0b0bd2fe4169098dae"
+  },
+  "buyer": {
+    "address": "0x0c073E8266a02d734274fc51B3952c6ED63Eb964"
+  },
+  "service": {
+    "method": "GET",
+    "quantity": 1,
+    "resource": "https://ax1.vc/api/x402",
+    "description": "Pay-per-call data API request"
+  },
+  "payment": {
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "assetSymbol": "USDC",
+    "amountAtomic": "20000",
+    "amount": "0.02",
+    "txHash": "0x91575d9f4f8db027ec0f3f307d80433827b9b8aaef2c7287a26db397c388e47b",
+    "blockNumber": "52985667",
+    "blockTimestamp": "2026-10-23T13:04:41.000Z",
+    "logIndex": 324,
+    "explorerUrl": "https://basescan.org/tx/0x91575d9f4f8db027ec0f3f307d80433827b9b8aaef2c7287a26db397c388e47b"
+  },
+  "valuation": {
+    "oracle": "Chainlink Data Feeds",
+    "feed": "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+    "feedDescription": "USDC / USD",
+    "readAtBlock": "52985667",
+    "roundId": "55340232221128654913",
+    "answer": "99984937",
+    "decimals": 8,
+    "updatedAt": "2026-10-23T12:52:37.000Z",
+    "usdPerUnit": "0.99984937",
+    "usdValue": "0.019996"
+  },
+  "tax": {
+    "supplyType": "electronically supplied service",
+    "placeOfSupply": "undetermined",
+    "treatment": "customer-location-evidence-required",
+    "vatRatePct": null,
+    "vatUsd": null,
+    "notes": [
+      "Buyer is identified only by a wallet address; collect two non-contradictory pieces of location evidence (or a business VAT ID) before finalising VAT treatment."
+    ],
+    "disclaimer": "Indicative only; not tax advice."
+  },
+  "receiptHash": "0xc3b6f9f5d872548c7658c47b41ed0ef9f94fd5be41818eebc7f4066eead8b124"
+}

@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AgentReceipts: legally useful receipts for AI-agent payments</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;max-width:980px;margin:24px auto;padding:0 16px;color:#111}
+h1{margin:0;font-size:26px}.sub{color:#555;margin:4px 0 20px}
+fieldset{border:1px solid #ddd;border-radius:8px;padding:12px 16px;margin:0 0 14px}legend{font-weight:600}
+label{display:block;margin:6px 0 2px;font-size:13px;color:#333}input,select,textarea{width:100%;box-sizing:border-box;padding:7px;border:1px solid #ccc;border-radius:6px;font:inherit}
+textarea{font:12px ui-monospace,monospace;min-height:220px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{padding:9px 16px;border:0;border-radius:6px;background:#1a56db;color:#fff;font-weight:600;cursor:pointer;margin-right:8px}button.alt{background:#555}
+.check{padding:4px 8px;border-radius:4px;margin:3px 0;font-size:13px}.ok{background:#e7f7ec}.bad{background:#fde8e8}
+#status{margin:10px 0;font-weight:600}a{color:#1a56db}
+</style></head><body>
+<h1>AgentReceipts</h1>
+<p class="sub">Turn an AI agent's x402 / USDC payment into an evidence-grade receipt: who paid whom, for what, under which hash-pinned terms, valued with the Chainlink USDC/USD round in effect at settlement, with indicative UK/EU VAT treatment. Anyone can verify it against the chain.</p>
+
+<fieldset><legend>1 · Settlement</legend><div class="row">
+<div><label>Network</label><select id="network"><option value="eip155:8453">Base mainnet</option><option value="eip155:84532">Base Sepolia</option></select></div>
+<div><label>Transaction hash</label><input id="tx" value="0x91575d9f4f8db027ec0f3f307d80433827b9b8aaef2c7287a26db397c388e47b"></div></div></fieldset>
+
+<fieldset><legend>2 · Seller (payee)</legend><div class="row">
+<div><label>Legal name</label><input id="sname" value="AX1 demo seller (illustrative)"></div>
+<div><label>Receiving wallet</label><input id="saddr" value="0x7284D41b5b852F2bd4c99bDf95043D84452d299C"></div>
+<div><label>Jurisdiction (ISO country)</label><input id="sjur" value="GB"></div>
+<div><label>VAT ID (optional)</label><input id="svat" placeholder="GB123456789"></div></div></fieldset>
+
+<fieldset><legend>3 · Service & buyer</legend><div class="row">
+<div><label>Resource purchased</label><input id="res" value="https://ax1.vc/api/x402/..."></div>
+<div><label>Description</label><input id="desc" value="Pay-per-call data API request"></div>
+<div><label>Buyer country (if known)</label><input id="bc" placeholder="e.g. DE"></div>
+<div><label>Buyer is a business?</label><select id="bb"><option value="">Unknown</option><option value="1">Yes</option><option value="0">No</option></select></div></div></fieldset>
+
+<button id="issue">Issue receipt</button><button class="alt" id="verify">Verify JSON below</button><button class="alt" id="tamper">Tamper amount + verify</button>
+<div id="status"></div><div id="checks"></div>
+<label>Receipt JSON (paste any receipt to verify it)</label><textarea id="json"></textarea>
+<script>
+const $ = (id) => document.getElementById(id);
+const status = (t) => ($("status").innerHTML = t);
+function showChecks(v){ $("checks").innerHTML = (v.checks||[]).map(c=>`<div class="check ${c.ok?'ok':'bad'}">${c.ok?'✔':'✘'} <b>${c.name}</b> — ${c.detail.replace(/</g,'&lt;')}</div>`).join(""); status(v.valid?"✔ Receipt verified against Base + Chainlink":"✘ Receipt FAILED verification"); }
+$("issue").onclick = async () => {
+  status("Reading settlement and Chainlink round…"); $("checks").innerHTML="";
+  const body = { network:$("network").value, txHash:$("tx").value.trim(),
+    seller:{ legalName:$("sname").value, address:$("saddr").value.trim(), jurisdiction:$("sjur").value.trim().toUpperCase(), vatId:$("svat").value.trim()||undefined },
+    service:{ resource:$("res").value, description:$("desc").value },
+    buyer:{ country:$("bc").value.trim().toUpperCase()||undefined, businessCustomer: $("bb").value===""?undefined:$("bb").value==="1" } };
+  const r = await fetch("/api/receipts",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); const j = await r.json();
+  if(!r.ok){ status("✘ "+j.error); return; }
+  $("json").value = JSON.stringify(j.receipt,null,2); status(`✔ Issued ${j.receipt.invoiceNumber} · <a href="${j.url}" target="_blank">printable receipt</a>`);
+};
+async function verify(){ status("Verifying against chain…"); let rc; try{ rc=JSON.parse($("json").value);}catch{ status("✘ Not valid JSON"); return; }
+  const r = await fetch("/api/verify",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(rc)}); const j = await r.json();
+  if(!r.ok){ status("✘ "+j.error); return; } showChecks(j); }
+$("verify").onclick = verify;
+$("tamper").onclick = async () => { try{ const rc=JSON.parse($("json").value); rc.payment.amount="200.00"; rc.payment.amountAtomic="200000000"; $("json").value=JSON.stringify(rc,null,2); await verify(); }catch{ status("Issue a receipt first"); } };
+</script></body></html>

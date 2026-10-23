@@ -1,0 +1,10 @@
+MACHINE-READABLE TERMS OF SERVICE FOR AUTOMATED (AGENT) PURCHASES — v1
+
+1. Parties. The Seller is identified in each receipt (legal name, jurisdiction, registration). The Buyer is the operator of the paying wallet. An AI agent paying from a wallet acts as the Buyer's agent; the Buyer is bound by purchases the agent makes within the spending authority the Buyer gave it.
+2. Offer and acceptance. Each HTTP 402 response is an offer for one unit of the described service at the stated price. A signed payment authorisation that settles on-chain is acceptance. The contract is formed at settlement.
+3. Price and currency. Prices are in USDC. The receipt records the Chainlink USDC/USD rate in effect at the settlement block for accounting purposes.
+4. Delivery. Delivery is the HTTP response to the paid request. If the Seller's handler fails, no settlement is made and no charge arises.
+5. Refunds. Digital content supplied immediately on request; the Buyer requests immediate supply. Defective responses may be re-requested within 24 hours by quoting the receipt hash.
+6. Records. The Seller issues a receipt for every settlement. The receipt hash, the settlement transaction and the Chainlink round together are the agreed record of the transaction.
+7. Liability. Data is provided "as is" for information only and is not financial, legal or tax advice. Liability is capped at the price paid for the relevant request.
+8. Governing law. The law of the Seller's stated jurisdiction applies unless mandatory consumer law of the Buyer's residence provides otherwise.

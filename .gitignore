@@ -1,0 +1,8 @@
+contracts/out/
+contracts/cache/
+node_modules/
+dist/
+data/
+receipt.json
+.env
+scratch/
